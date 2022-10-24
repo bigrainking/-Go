@@ -1,0 +1,48 @@
+<div class="page-head">
+    <h2 class="page-head-title">订单管理</h2>
+
+</div>
+
+<div class="main-content container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default panel-border-color panel-border-color-primary">
+                <div class="panel-heading panel-heading-divider">添加订单<span class="panel-subtitle"></span></div>
+                <div class="panel-body">
+                    <form action="/order/add" style="border-radius: 0px;" class="form-horizontal group-border-dashed" method="post" >
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">用户ID</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="UserID"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品ID</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="ProductID"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">物流状态</label>
+                            <div class="col-sm-6">
+                                <input type="text"   class="form-control" name="OrderStatus"  >
+                            </div>
+                        </div>
+                        <div class="row xs-pt-15">
+                            <div class="col-xs-6">
+                                <p class="text-right">
+                                    <!-- 点击按钮:则Post请求/order/add 由上面的代码知:form action="/order/add"-->
+                                    <button type="submit" class="btn btn-space btn-primary">添加</button>
+                                    <button type="reset" class="btn btn-space btn-default" >重置</button>
+                                </p>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

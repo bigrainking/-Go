@@ -58,7 +58,8 @@ func (p *ProductManager) Insert(product *datamodels.Product) (ret int64, err err
 		return
 	}
 	// 2. 执行增语句
-	stmt, err := p.mysqlConn.Prepare("INSERT " + p.table + " SET productName=?,productNum=?,productImage=?,productUrl=?")
+	sql := "INSERT " + p.table + " SET productName=?,productNum=?,productImage=?,productUrl=?"
+	stmt, err := p.mysqlConn.Prepare(sql)
 	if err != nil {
 		return
 	}

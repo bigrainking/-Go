@@ -1,5 +1,5 @@
 // 逻辑处理层
-package service
+package services
 
 import (
 	"Spike-Product-Demo/datamodels"
@@ -21,28 +21,28 @@ type IProductService interface {
 	UpdateProduct(product *datamodels.Product) error
 }
 
-type IProductServiceManager struct {
+type ProductServiceManager struct {
 	repositoryProduct repository.IProduct
 }
 
-func NewIRoductSeviceManager(repositoryProduct repository.IProduct) IProductService {
-	return &IProductServiceManager{repositoryProduct}
+func NewIPoductSeviceManager(repositoryProduct repository.IProduct) IProductService {
+	return &ProductServiceManager{repositoryProduct}
 }
 
 // 实现接口
 // 下面都是直接返回repository操作数据的结果
-func (pService *IProductServiceManager) InsertProduct(product *datamodels.Product) (int64, error) {
+func (pService *ProductServiceManager) InsertProduct(product *datamodels.Product) (int64, error) {
 	return pService.repositoryProduct.Insert(product)
 }
-func (pService *IProductServiceManager) DeleteProductByID(id int64) error {
+func (pService *ProductServiceManager) DeleteProductByID(id int64) error {
 	return pService.repositoryProduct.Delete(id)
 }
-func (pService *IProductServiceManager) UpdateProduct(product *datamodels.Product) error {
+func (pService *ProductServiceManager) UpdateProduct(product *datamodels.Product) error {
 	return pService.repositoryProduct.Update(product)
 }
-func (pService *IProductServiceManager) GetProductByID(id int64) (*datamodels.Product, error) {
+func (pService *ProductServiceManager) GetProductByID(id int64) (*datamodels.Product, error) {
 	return pService.repositoryProduct.SearchById(id)
 }
-func (pService *IProductServiceManager) GetAllProduct() ([]*datamodels.Product, error) {
+func (pService *ProductServiceManager) GetAllProduct() ([]*datamodels.Product, error) {
 	return pService.repositoryProduct.SearchAll()
 }
