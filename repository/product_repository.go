@@ -20,6 +20,7 @@ type IProduct interface {
 	SearchById(id int64) (*datamodels.Product, error) //查找数据，返回查找出来的结构体
 	SearchAll() ([]*datamodels.Product, error)        //查找所有数据，返回多个products对应结构体
 	Update(*datamodels.Product) error                 //更新某条product
+	SubProductNum(productID int64) error              //商品数量-1
 }
 
 // 实现接口
@@ -143,6 +144,9 @@ func (p *ProductManager) SearchAll() (productArry []*datamodels.Product, err err
 }
 
 func (p *ProductManager) Update(product *datamodels.Product) (err error) { //更新某条product
+	if err = p.Conn(); err != nil {
+		return
+	}
 	sql := "update " + p.table + " SET productName=?, productNum=?, productImage=?, productUrl=? where ID=?"
 	stmt, err := p.mysqlConn.Prepare(sql)
 	if err != nil {
@@ -153,4 +157,16 @@ func (p *ProductManager) Update(product *datamodels.Product) (err error) { //更
 		return
 	}
 	return nil
+}
+func (p *ProductManager) SubProductNum(productID int64) error {
+	if err := p.Conn(); err != nil {
+		return err
+	}
+	sql := "Update " + p.table + " SET productNum = productNum-1 where ID=" + strconv.FormatInt(productID, 10)
+	stmt, err := p.mysqlConn.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec()
+	return err
 }

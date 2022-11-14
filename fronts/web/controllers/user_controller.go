@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Spike-Product-Demo/datamodels"
+	"Spike-Product-Demo/encrypt"
 	"Spike-Product-Demo/services"
 	"Spike-Product-Demo/tool"
 	"strconv"
@@ -54,7 +55,7 @@ func (u *UserController) GetLogin() mvc.View {
 }
 
 func (u *UserController) PostLogin() mvc.Response {
-	// 1. 获取用户表单输入
+	// 1. 获取用户表单信息
 	var (
 		userName = u.Ctx.FormValue("UserName")
 		passWd   = u.Ctx.FormValue("Password")
@@ -69,8 +70,14 @@ func (u *UserController) PostLogin() mvc.Response {
 		}
 	}
 	// 2.2 密码输入正确:将用户ID写入到cookie中
-	tool.GlobalCookie(u.Ctx, "uid", strconv.FormatInt(user.ID, 10))
-	u.Session.Set("userID", strconv.FormatInt(user.ID, 10))
+	tool.GlobalCookie(u.Ctx, "uid", strconv.FormatInt(user.ID, 10)) //直接存入cookie
+	uidByte := []byte(strconv.FormatInt(user.ID, 10))               // AES加密后存入cookie
+	uidString, err := encrypt.EnPwdCode(uidByte)
+	if err != nil {
+		u.Ctx.Application().Logger().Debug(err)
+	}
+	tool.GlobalCookie(u.Ctx, "signuid", uidString)
+	// u.Session.Set("userID", strconv.FormatInt(user.ID, 10))
 	return mvc.Response{
 		Path: "/product/",
 	}

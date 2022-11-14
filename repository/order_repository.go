@@ -27,7 +27,7 @@ type OrderManager struct {
 	table     string
 }
 
-func NewOrderManagerRepository(table string, mysqlConn *sql.DB) Order {
+func NewOrderManagerRepo(table string, mysqlConn *sql.DB) Order {
 	return &OrderManager{mysqlConn, table}
 }
 

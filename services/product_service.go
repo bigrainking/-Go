@@ -19,6 +19,7 @@ type IProductService interface {
 	InsertProduct(product *datamodels.Product) (ID int64, err error)
 	DeleteProductByID(ID int64) error
 	UpdateProduct(product *datamodels.Product) error
+	SubProductNum(productID int64) error //商品数量-1
 }
 
 type ProductServiceManager struct {
@@ -45,4 +46,7 @@ func (pService *ProductServiceManager) GetProductByID(id int64) (*datamodels.Pro
 }
 func (pService *ProductServiceManager) GetAllProduct() ([]*datamodels.Product, error) {
 	return pService.repositoryProduct.SearchAll()
+}
+func (pService *ProductServiceManager) SubProductNum(productID int64) error {
+	return pService.repositoryProduct.SubProductNum(productID)
 }

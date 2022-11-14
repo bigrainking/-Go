@@ -13,7 +13,7 @@ import (
 // ====== 注册一个Controller的控制器
 type OrderController struct {
 	Ctx          iris.Context
-	OrderService services.OrderService //需要外部可使用，大写
+	OrderService services.IOrderService //需要外部可使用，大写
 }
 
 // ====== Controller相关方法

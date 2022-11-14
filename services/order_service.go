@@ -7,7 +7,7 @@ import (
 
 // 订单的逻辑函数
 
-type OrderService interface {
+type IOrderService interface {
 	// 增删改查
 	InsertOrder(order *datamodels.Order) (id int64, err error)
 	DeleteOrder(id int64) error
@@ -15,13 +15,15 @@ type OrderService interface {
 	GetOrderByID(id int64) (*datamodels.Order, error)
 	GetAllOrder() ([]*datamodels.Order, error)
 	GetAllWithInfo() ([]map[string]string, error) //获取订单号\商品名\发货状态
+	// 抢购成功订单
+	InsertOrderByMessage(*datamodels.Message) error
 }
 
 type OrderManager struct {
 	repoOrder repository.Order
 }
 
-func NewOrderServiceManager(repo repository.Order) OrderService {
+func NewOrderServiceManager(repo repository.Order) IOrderService {
 	return &OrderManager{repo}
 }
 
@@ -42,4 +44,13 @@ func (o *OrderManager) GetAllOrder() ([]*datamodels.Order, error) {
 }
 func (o *OrderManager) GetAllWithInfo() ([]map[string]string, error) { //获取订单号\商品名\发货状态
 	return o.repoOrder.SelectAllWithInfo()
+}
+func (o *OrderManager) InsertOrderByMessage(message *datamodels.Message) error {
+	order := &datamodels.Order{
+		UserID:      message.UserID,
+		ProductID:   message.ProductID,
+		Orderstatus: datamodels.OrderSuccess,
+	}
+	_, err := o.repoOrder.Insert(order)
+	return err
 }

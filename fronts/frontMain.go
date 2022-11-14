@@ -1,8 +1,10 @@
 package main
 
 import (
-	"Spike-Product-Demo/backends/web/controllers"
 	"Spike-Product-Demo/common"
+	"Spike-Product-Demo/fronts/web/controllers"
+	"Spike-Product-Demo/fronts/web/middleware"
+	"Spike-Product-Demo/rabbitmq"
 	"Spike-Product-Demo/repository"
 	"Spike-Product-Demo/services"
 	"context"
@@ -20,13 +22,12 @@ func main() {
 
 	// 3. =================设置模板
 	// 3.1 注册动态模板
-	tmplate := iris.HTML("./backends/web/views", ".html").Layout("shared/layout.html").Reload(true)
-	// template := iris.HTML("./backends/webs/views", ".html").Layout("shared/layout.html") //.Reload(true) //layout的文件地址已经在HTML中被告知了，因此只需要给出相对地址
+	tmplate := iris.HTML("./web/views", ".html").Layout("shared/layout.html").Reload(true)
 	app.RegisterView(tmplate)
 
 	// 3.2 设置静态模板
-	app.HandleDir("/assets", "./backends/web/assets") //请求路径 ， 实际文件夹中路径
-
+	app.HandleDir("/public", "./web/public") //请求路径，实际文件夹中路径
+	app.HandleDir("/html", "./web/htmlProductShow")
 	// 4. =================设置异常errorCode页面跳转
 	app.OnAnyErrorCode(errorHandler)
 
@@ -35,7 +36,7 @@ func main() {
 
 	// 6. =====================启动
 	app.Run(
-		iris.Addr(":8080"),
+		iris.Addr("192.168.64.128:8081"),
 		iris.WithoutServerError(),
 	)
 }
@@ -55,17 +56,27 @@ func initController(app *iris.Application) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	//  product控制器
-	repoProduct := repository.NewProductManager("product", db)
-	serviceProduct := services.NewIPoductSeviceManager(repoProduct)
-	product := mvc.New(app.Party("/product"))
-	product.Register(ctx, serviceProduct)
-	product.Handle(new(controllers.ProductController))
+	// 后面cookie优化，不需要session了
+	// session
+	// // session中保存一个cookie的名字
+	// sess := sessions.New(sessions.Config{
+	// 	Cookie: "AdminCookie",
+	// })
+	//  user控制器
+	repoUser := repository.NewUserManagerRepo("spikeSystem.user", db)
+	serviceUser := services.NewUserServiceManager(repoUser)
+	user := mvc.New(app.Party("/user"))
+	user.Register(ctx, serviceUser /*,sess.Start*/)
+	user.Handle(new(controllers.UserController))
 
-	// order控制器
-	repoOrder := repository.NewOrderManagerRepository("order", db)
+	rabbitmq := rabbitmq.NewRabbitMQsimple("spikeProduct")
+	// productshow控制器
+	repoProduct := repository.NewProductManager("spikeSystem.product", db)
+	serviceProduct := services.NewIPoductSeviceManager(repoProduct)
+	repoOrder := repository.NewOrderManagerRepo("spikeSystem.order", db)
 	serviceOrder := services.NewOrderServiceManager(repoOrder)
-	order := mvc.New(app.Party("/order"))
-	order.Register(ctx, serviceOrder)
-	order.Handle(new(controllers.OrderController))
+	product := mvc.New(app.Party("/product"))
+	product.Router.Use(middleware.AuthConProduct)
+	product.Register(ctx, serviceProduct, serviceOrder, rabbitmq) //, sess.Start)
+	product.Handle(new(controllers.ProductController))
 }
