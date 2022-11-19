@@ -13,7 +13,7 @@ import (
 
 // MQ的URL
 // URL固定的格式: amqp://账号：密码@rabbitmq服务器地址：端口号/vhost
-const MQURL = "amqp://guest:guest@127.0.0.1:5672/rabbitVHost"
+const MQURL = "amqp://test:1@10.10.10.128:5672/rabbitVHost"
 
 // 实例类
 type RabbitMQ struct {

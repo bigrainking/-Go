@@ -19,15 +19,16 @@ import (
 var hashConsistent *common.Consistent
 
 // 集群地址
-var hostArray = []string{"192.168.64.128", "192.168.64.128"}
+var hostArray = []string{"10.10.10.3", "10.10.10.4"}
 
 // 本机地址and端口
 var localHost = ""
 var port = "8080"
 
 // getOne抢购IP
-var getOneIP = "127.0.0.1"
-var getOnePort = "8084"
+var getOneIP = "10.10.10.5"
+
+var getOnePort = "8085"
 
 // RabbitMQ
 var rabbitMQValidate *rabbitmq.RabbitMQ
@@ -70,9 +71,9 @@ func CheckUserInfo(r *http.Request) error {
 	if err != nil {
 		return errors.New("加密信息被篡改")
 	}
-	fmt.Println("结果比对")
-	fmt.Println("用户ID：" + uidCookie.Value)
-	fmt.Println("解密后用户ID：" + string(signByte))
+	// fmt.Println("结果比对")
+	// fmt.Println("用户ID：" + uidCookie.Value)
+	// fmt.Println("解密后用户ID：" + string(signByte))
 	// 对比解密后的uid与明文uid
 	if CheckInfo(uidCookie.Value, string(signByte)) {
 		return nil
@@ -118,7 +119,7 @@ func Check(rw http.ResponseWriter, req *http.Request) {
 		rw.Write([]byte("用户ID不存在， err:" + err.Error()))
 		return
 	}
-	fmt.Println(userCookie.Value, productString)
+	fmt.Println("用户名，商品名：", userCookie.Value, productString)
 	// 1. 用户权限验证
 	right := accessControl.GetDistributedRight(req) //验证的是req
 	if right == false {
@@ -309,6 +310,6 @@ func main() {
 	http.HandleFunc("/check", filter.Handle(Check))
 	http.HandleFunc("/checkRight", filter.Handle(CheckRight))
 	// 4. 启动
-	http.ListenAndServe("192.168.64.128:8080", nil)
+	http.ListenAndServe(":8080", nil) //本机端口
 
 }

@@ -36,7 +36,8 @@ func main() {
 
 	// 6. =====================启动
 	app.Run(
-		iris.Addr("192.168.64.128:8081"),
+		// iris.Addr(":8081"),
+		iris.Addr(":8081"),
 		iris.WithoutServerError(),
 	)
 }

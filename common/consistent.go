@@ -303,7 +303,7 @@ func (c *Consistent) search(key uint32) int {
 
 //6.===================根据数据标示获取最近的服务器节点信息============
 func (c *Consistent) Get(name string) (string, error) {
-	fmt.Println("开始执行consistent：c:")
+	fmt.Println("开始执行consistent获取最近的服务器节点信息：")
 	// //添加锁
 	// c.Lock()
 	// //解锁
